@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="example.com.mdp_group3.MainActivity">
+
+    <TextView
+        android:text="Col:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/turnLeft"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/colText"
+        android:textSize="24sp" />
+
+    <TextView
+        android:text="Row:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rowText"
+        android:textSize="24sp"
+        android:layout_alignTop="@+id/moveForward"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="TURN LEFT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/turnLeft"
+        android:layout_alignBaseline="@+id/reverse"
+        android:layout_alignBottom="@+id/reverse"
+        android:layout_toLeftOf="@+id/reverse"
+        android:layout_toStartOf="@+id/reverse" />
+
+    <Button
+        android:text="TURN RIGHT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/turnRight"
+        android:layout_alignBaseline="@+id/reverse"
+        android:layout_alignBottom="@+id/reverse"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="FORWARD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/moveForward"
+        android:layout_below="@+id/mapPanel"
+        android:layout_toRightOf="@+id/turnLeft"
+        android:layout_toEndOf="@+id/turnLeft" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:id="@+id/mapPanel"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></LinearLayout>
+
+    <Button
+        android:text="Initialize Robot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/setPos"
+        android:layout_below="@+id/colPos"
+        android:layout_alignLeft="@+id/colPos"
+        android:layout_alignStart="@+id/colPos" />
+
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/rowPos"
+        android:layout_below="@+id/mapPanel"
+        android:layout_toRightOf="@+id/rowText"
+        android:layout_toEndOf="@+id/rowText" />
+
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/colPos"
+        android:layout_below="@+id/rowPos"
+        android:layout_alignLeft="@+id/rowPos"
+        android:layout_alignStart="@+id/rowPos" />
+
+    <Button
+        android:text="UPDATE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onBtnUpdatePressed"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/btnUpdate" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnUpdate"
+        android:textOff="@string/manual"
+        android:textOn="@string/auto"
+        android:onClick="onToggleBtnUpdatePressed"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/toggleMode" />
+
+    <Button
+        android:text="F2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleMode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/btnF2" />
+
+    <Button
+        android:text="F1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnF2"
+        android:layout_alignRight="@+id/btnF2"
+        android:layout_alignEnd="@+id/btnF2"
+        android:id="@+id/btnF1" />
+
+    <Button
+        android:text="START"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnExploreStart"
+        android:layout_alignBaseline="@+id/btnExploreStop"
+        android:layout_alignBottom="@+id/btnExploreStop"
+        android:layout_alignLeft="@+id/turnLeft"
+        android:layout_alignStart="@+id/turnLeft" />
+
+    <Button
+        android:text="STOP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnExploreStop"
+        android:layout_alignBaseline="@+id/btnF1"
+        android:layout_alignBottom="@+id/btnF1"
+        android:layout_toRightOf="@+id/btnExploreStart"
+        android:layout_toEndOf="@+id/btnExploreStart" />
+
+    <Button
+        android:text="RESET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btnExploreStop"
+        android:layout_toRightOf="@+id/btnExploreStop"
+        android:layout_toEndOf="@+id/btnExploreStop"
+        android:id="@+id/btnExploreReset" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnF1"
+        android:layout_toRightOf="@+id/btnF2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_above="@+id/toggleMode"
+        android:layout_alignRight="@+id/setPos"
+        android:layout_alignEnd="@+id/setPos"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        android:textAlignment="center"
+        android:id="@+id/robotStatus" />
+
+    <TextView
+        android:text="0:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timer1"
+        android:textAlignment="center"
+        android:textStyle="normal|bold"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/btnF2"
+        android:layout_alignBottom="@+id/btnF2"
+        android:layout_toRightOf="@+id/btnExploreStart"
+        android:layout_toEndOf="@+id/btnExploreStart"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp" />
+
+    <Button
+        android:text="REVERSE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reverse"
+        android:layout_below="@+id/moveForward"
+        android:layout_toLeftOf="@+id/turnRight"
+        android:layout_toStartOf="@+id/turnRight" />
+
+    <TextView
+        android:text="Status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignLeft="@+id/robotStatus"
+        android:layout_alignStart="@+id/robotStatus"
+        android:textSize="18sp"
+        android:layout_alignRight="@+id/robotStatus"
+        android:layout_alignEnd="@+id/robotStatus"
+        android:textAlignment="center" />
+
+    <TextView
+        android:text="Explore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/btnExploreStart"
+        android:layout_alignBottom="@+id/btnExploreStart"
+        android:layout_toRightOf="@+id/robotStatus"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp" />
+
+</RelativeLayout>

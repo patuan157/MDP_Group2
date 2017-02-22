@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:id="@+id/textview_f1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="160dp"
+        android:text="@string/f1" />
+
+    <EditText
+        android:id="@+id/edittext_f1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textview_f1"
+        android:layout_alignBottom="@+id/textview_f1"
+        android:layout_marginLeft="19dp"
+        android:layout_toRightOf="@+id/textview_f1"
+        android:ems="10"
+        android:imeOptions="actionNext"
+        android:singleLine="true" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/textview_f2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textview_f1"
+        android:layout_below="@+id/edittext_f1"
+        android:layout_marginTop="22dp"
+        android:text="@string/f2" />
+
+    <EditText
+        android:id="@+id/edittext_f2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textview_f2"
+        android:layout_alignBottom="@+id/textview_f2"
+        android:layout_alignLeft="@+id/edittext_f1"
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edittext_f2"
+        android:layout_below="@+id/edittext_f2"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="31dp"
+        android:text="@string/save_all"
+        android:onClick="onSaveBtnClicked" />
+
+    <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_save"
+        android:layout_below="@+id/btn_save"
+        android:text="@string/clear_all"
+        android:onClick="onClearBtnClicked" />
+
+</RelativeLayout>
