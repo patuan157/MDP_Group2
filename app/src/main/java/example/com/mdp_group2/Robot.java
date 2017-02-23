@@ -1,4 +1,4 @@
-package example.com.mdp_group3;
+package example.com.mdp_group2;
 
 /**
  * Robot Class to track the coordinate of the robot on the map and the direction of movement

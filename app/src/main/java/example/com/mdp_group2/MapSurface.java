@@ -1,4 +1,4 @@
-package example.com.mdp_group3;
+package example.com.mdp_group2;
 
 import android.content.Context;
 import android.graphics.Bitmap;

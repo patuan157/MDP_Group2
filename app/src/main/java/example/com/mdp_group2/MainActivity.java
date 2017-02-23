@@ -1,4 +1,4 @@
-package example.com.mdp_group3;
+package example.com.mdp_group2;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage("RESET");
-                timer1.setText("0:00");
+                timer1.setText(R.string.default_time);
             }
         });
         toggleMode = (ToggleButton) findViewById(R.id.toggleMode);

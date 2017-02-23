@@ -1,7 +1,5 @@
-package example.com.mdp_group3;
+package example.com.mdp_group2;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
