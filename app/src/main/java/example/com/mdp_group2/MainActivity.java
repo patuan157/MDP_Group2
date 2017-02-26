@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     Handler mapHandler = new Handler();                 // Mode : Manual or Auto
     Runnable mapRunnable = new Runnable() {
-        public void run() {
+        public void run() {                      // Delay : 5(s) until new Map updated
             //btnUpdate.performClick();
             onBtnUpdatePressed(null);
 
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mapSurface.moveForward();
-                sendMessage("f");
+                sendMessage("forward");
             }
         });
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mapSurface.reverse();
-                sendMessage("r");
+                sendMessage("reverse");
             }
         });
 
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mapSurface.turnLeft();
-                sendMessage("tl");
+                sendMessage("turnleft");
             }
         });
 
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mapSurface.turnRight();
-                sendMessage("tr");
+                sendMessage("turnright");
             }
         });
 
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         exploreStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage("START");
+                sendMessage("beginExplore");
                 startTime1 = System.currentTimeMillis();
                 timerHandler1.postDelayed(timerRunnable1, 0);
                 exploreStart.setEnabled(false);
@@ -388,9 +388,9 @@ public class MainActivity extends AppCompatActivity {
                         robotStatus.setText(R.string.exploring);
                     } else {
                         // Decode action from robot to send back to the Android Tablet
-                        // Message contain grid mean arenaInfo
-                        if (readMessage.contains("grid"))
-                            mapSurface.decodeAction(readMessage);
+                        // Message contain GRID mean arenaInfo
+                        if (readMessage.contains("GRID"))
+                            mapSurface.decodeMessage(readMessage);
                     }
 
 
@@ -502,6 +502,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onBtnUpdatePressed(View view) {
         //request map from rpi/pc
-        sendMessage("GRID");
+        sendMessage("sendArena");
     }
 }

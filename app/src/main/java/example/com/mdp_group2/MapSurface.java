@@ -18,7 +18,7 @@ import android.view.SurfaceHolder;
 
 public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
 
-    private static final String TAG = "Surface Grid";
+    private static final String TAG = "Map Surface";
     private Robot robot;
 
     private Canvas canvas;
@@ -42,14 +42,14 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
     private static final String HEAD_POS_LEFT = "L";
     private static final String HEAD_POS_RIGHT = "R";
 
-    public static String defaultMap =                   // Example with some obstacle here
-                                       "0 0 0 0 0 0 0 0 0 0 0 0 2 2 2" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2" +
+    public static String defaultMap =                   // Test obstacles display here
+                                       "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
                                       " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0" +
+                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
                                       " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
                                       " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
                                       " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
@@ -100,7 +100,7 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
         //decodeAction(defaultMap);
         float defaultX = mapStartX + SCREEN_PADDING;
         float defaultY = mapStartY + SCREEN_PADDING + 17*cellWidth;
-        robot = new Robot(defaultX, defaultY, "U");
+        robot = new Robot(defaultX, defaultY, "U", defaultMap);
 
         // First draw
         drawMap();
@@ -111,7 +111,7 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
         //float defaultX = mapStartX + SCREEN_PADDING;
         //float defaultY = mapStartY + SCREEN_PADDING + 17*cellWidth;
         canvas = sh.lockCanvas();
-        updateMap(robot.getCurrentX(), robot.getCurrentY(), robot.getHeadPos(), defaultMap);
+        updateMap(robot.getCurrentX(), robot.getCurrentY(), robot.getHeadPos(), robot.getArenaMap());
         if(canvas != null)
             sh.unlockCanvasAndPost(canvas);
     }
@@ -286,6 +286,7 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
             default:
                 break;
         }
+
     }
 
     public void drawMapGrid(String mapInfo){
@@ -349,7 +350,8 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    public void decodeAction(String newMapInfo){
+    public void decodeMessage(String newMapInfo){
+        // Decode base on Legacy PPT Format (AMDTool/scripts)
         String[] updatedInfo = processMapDescriptor(newMapInfo);
         float currentX = mapStartX + SCREEN_PADDING + (Integer.valueOf(updatedInfo[0]) - 1) * cellWidth;
         float currentY = mapStartY + SCREEN_PADDING + (Integer.valueOf(updatedInfo[1]) - 1) * cellWidth;
@@ -358,7 +360,9 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
         String headPos = updatedInfo[2];
         robot.setHeadPos(headPos);
         String mapInfo = updatedInfo[3];
-        drawMapGrid(mapInfo);
+        robot.setArenaMap(mapInfo);
+
+        drawMap();
         Log.d(TAG, "Row: " + (updatedInfo[1]) + " Col: " + (updatedInfo[0]) + " head: " + updatedInfo[2]);
     }
 
@@ -376,6 +380,7 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
         updatedInfo[2] = checkHead(tmpRobot[2]);
         updatedInfo[3] = mapInfo;
 
+        // Return Map String
         return updatedInfo;
     }
 

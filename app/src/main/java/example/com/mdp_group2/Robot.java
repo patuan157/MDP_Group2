@@ -8,11 +8,13 @@ public class Robot {
     private float currentX;
     private float currentY;
     private String headPos;
+    private String arenaMap;
 
-    public Robot(float currentX, float currentY, String headPos){
+    public Robot(float currentX, float currentY, String headPos, String arenaMap){
         this.currentX = currentX;
         this.currentY = currentY;
         this.headPos = headPos;
+        this.arenaMap = arenaMap;
     }
 
     public float getCurrentX() {
@@ -27,6 +29,8 @@ public class Robot {
         return headPos;
     }
 
+    public String getArenaMap() { return arenaMap; }
+
     public void setCurrentX(float currentX) {
         this.currentX = currentX;
     }
@@ -38,5 +42,7 @@ public class Robot {
     public void setHeadPos(String headPos) {
         this.headPos = headPos;
     }
+
+    public void setArenaMap(String arenaMap) { this.arenaMap = arenaMap; }
 
 }
