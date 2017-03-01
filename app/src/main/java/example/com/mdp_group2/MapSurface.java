@@ -19,7 +19,7 @@ import android.view.SurfaceHolder;
 public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "Map Surface";
-    private Robot robot;
+    public Robot robot;
 
     private Canvas canvas;
     private Paint paint;
@@ -385,11 +385,11 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private static String checkHead(String posX1) {
-        if (Integer.valueOf(posX1) == 3)
+        if (Integer.valueOf(posX1) == 270)
             return HEAD_POS_LEFT;
-        else if (Integer.valueOf(posX1) == 2)
+        else if (Integer.valueOf(posX1) == 180)
             return HEAD_POS_DOWN;
-        else if (Integer.valueOf(posX1) == 1)
+        else if (Integer.valueOf(posX1) == 90)
             return HEAD_POS_RIGHT;
         else
             return HEAD_POS_UP;

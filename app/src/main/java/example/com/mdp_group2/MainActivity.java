@@ -4,13 +4,19 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = "BluetoothChat";
     private static final boolean D = true;
@@ -35,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText robotRow;
     private EditText robotCol;
     Button initializeRobot;
+
 
     // Message types sent from the BluetoothChatService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -74,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
     Button btnUpdate;               // Update the map
     long startTime1 = 0;            // Count run time for explore
 
+    float x1;
+    float x2;
+    float y1;
+    float y2;
+
     Handler timerHandler1 = new Handler();          // Handle Explore run time
     Runnable timerRunnable1 = new Runnable() {
         @Override
@@ -105,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BC = (BluetoothConnect) getApplication();
 
@@ -121,6 +134,44 @@ public class MainActivity extends AppCompatActivity {
         mapPanel = (LinearLayout) findViewById(R.id.mapPanel);
         mapSurface = new MapSurface(MainActivity.this);
         mapPanel.addView(mapSurface);
+        mapPanel.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = MotionEventCompat.getActionMasked(event);
+
+                switch(action) {
+                    case (MotionEvent.ACTION_DOWN) :
+                        Log.d(TAG,"Action was DOWN");
+                        x1 = event.getX();
+                        y1 = event.getY();
+                        return true;
+                    case (MotionEvent.ACTION_UP) :
+                        Log.d(TAG,"Action was UP");
+                        x2 = event.getX();
+                        y2 = event.getY();
+                        Direction direction = getDirection(x1,y1,x2,y2);
+                        robotStatus.setText(direction.toString());
+                        switch(direction.toString()){
+                            case "up":
+                                mapSurface.moveForward();
+                                break;
+                            case "down":
+                                mapSurface.reverse();
+                                break;
+                            case "left":
+                                mapSurface.turnLeft();
+                                break;
+                            case "right":
+                                mapSurface.turnRight();
+                                break;
+                        }
+
+                        return true;
+                    default :
+                        return true;
+                }
+            }
+        });
 
         moveForward = (Button) findViewById(R.id.moveForward);
         moveForward.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mapSurface.moveForward();
                 sendMessage("forward");
+                robotStatus.setText(R.string.move_forward);
             }
         });
 
@@ -137,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mapSurface.reverse();
                 sendMessage("reverse");
+                robotStatus.setText(R.string.move_reverse);
             }
         });
 
@@ -146,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mapSurface.turnLeft();
                 sendMessage("turnleft");
+                robotStatus.setText(R.string.turn_left);
             }
         });
 
@@ -155,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mapSurface.turnRight();
                 sendMessage("turnright");
+                robotStatus.setText(R.string.turn_right);
             }
         });
 
@@ -167,8 +222,35 @@ public class MainActivity extends AppCompatActivity {
                 String x = robotCol.getText().toString();
                 String y = robotRow.getText().toString();
                 if (checkPos(x,y)) {
+                    //sendMessage("sendArena");
+
                     mapSurface.setCoordinate(Integer.valueOf(x), Integer.valueOf(y));
                     sendMessage("coordinate (" + x + "," + y + ")");
+                    // Re-locate the virtual robot as the same with in Android Map
+
+                    int row = Integer.valueOf(x);
+                    int col = Integer.valueOf(y);
+
+
+                    for (int i = 0; i < row-1; i ++){
+                        try {
+                            Thread.sleep(200);
+                            sendMessage("forward");
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    for (int j=0; j<col-1; j++){
+                        try {
+                            Thread.sleep(200);
+                            sendMessage("sr");
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                    //mapSurface.setCoordinate(Integer.valueOf(x), Integer.valueOf(y));
                 }
             }
         });
@@ -199,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage("beginExplore");
+                robotStatus.setText("exploring");
                 startTime1 = System.currentTimeMillis();
                 timerHandler1.postDelayed(timerRunnable1, 0);
                 exploreStart.setEnabled(false);
@@ -222,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage("RESET");
+                robotStatus.setText("reset");
                 timer1.setText(R.string.default_time);
             }
         });
@@ -284,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume() {
+    protected synchronized void onResume() {
         super.onResume();
         if (D) Log.e(TAG, "+ ON RESUME +");
 
@@ -311,7 +395,6 @@ public class MainActivity extends AppCompatActivity {
     public synchronized void onPause() {
         super.onPause();
         if (D) Log.e(TAG, "- ON PAUSE -");
-
     }
 
     @Override
@@ -504,4 +587,85 @@ public class MainActivity extends AppCompatActivity {
         //request map from rpi/pc
         sendMessage("sendArena");
     }
+
+    // Sensor part
+
+    /**
+     * Given two points in the plane p1=(x1, x2) and p2=(y1, y1), this method
+     * returns the direction that an arrow pointing from p1 to p2 would have.
+     * @param x1 the x position of the first point
+     * @param y1 the y position of the first point
+     * @param x2 the x position of the second point
+     * @param y2 the y position of the second point
+     * @return the direction
+     */
+    public Direction getDirection(float x1, float y1, float x2, float y2){
+        double angle = getAngle(x1, y1, x2, y2);
+        return Direction.get(angle);
+    }
+
+    /**
+     *
+     * Finds the angle between two points in the plane (x1,y1) and (x2, y2)
+     * The angle is measured with 0/360 being the X-axis to the right, angles
+     * increase counter clockwise.
+     *
+     * @param x1 the x position of the first point
+     * @param y1 the y position of the first point
+     * @param x2 the x position of the second point
+     * @param y2 the y position of the second point
+     * @return the angle between two points
+     */
+    public double getAngle(float x1, float y1, float x2, float y2) {
+
+        double rad = Math.atan2(y1-y2,x2-x1) + Math.PI;
+        return (rad*180/Math.PI + 180)%360;
+    }
+
+
+    public enum Direction{
+        up,
+        down,
+        left,
+        right;
+
+        /**
+         * Returns a direction given an angle.
+         * Directions are defined as follows:
+         *
+         * Up: [45, 135]
+         * Right: [0,45] and [315, 360]
+         * Down: [225, 315]
+         * Left: [135, 225]
+         *
+         * @param angle an angle from 0 to 360 - e
+         * @return the direction of an angle
+         */
+        public static Direction get(double angle){
+            if(inRange(angle, 45, 135)){
+                return Direction.up;
+            }
+            else if(inRange(angle, 0,45) || inRange(angle, 315, 360)){
+                return Direction.right;
+            }
+            else if(inRange(angle, 225, 315)){
+                return Direction.down;
+            }
+            else{
+                return Direction.left;
+            }
+
+        }
+
+        /**
+         * @param angle an angle
+         * @param init the initial bound
+         * @param end the final bound
+         * @return returns true if the given angle is in the interval [init, end).
+         */
+        private static boolean inRange(double angle, float init, float end){
+            return (angle >= init) && (angle < end);
+        }
+    }
 }
+
