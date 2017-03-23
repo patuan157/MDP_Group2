@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -26,7 +27,11 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder sh;
 
     private int mapStartX = 0, mapStartY = 0;
+    private int col = 1, row = 1;
     private float cellWidth;
+
+    public String mdfP1 = "";
+    public String mdfP2 = "";
 
     private static Bitmap robotUp;
     private static Bitmap robotDown;
@@ -43,26 +48,26 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
     private static final String HEAD_POS_RIGHT = "R";
 
     public static String defaultMap =                   // Test obstacles display here
-                                       "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
-                                      " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
+                     "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" +
+                    " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
 
     public MapSurface(Context context){
         super(context);
@@ -264,6 +269,8 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
         robot.setCurrentX(currentX);
         robot.setCurrentY(currentY);
         robot.setHeadPos(headPos);
+        col = x;
+        row = y;
         drawMap();
     }
 
@@ -326,7 +333,7 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
                 float right = left + cellWidth;
                 float bottom = top + cellWidth;
 
-                Log.d(TAG, "paint block: " + currentRow + ", " + currentCol);
+                //Log.d(TAG, "paint block: " + currentRow + ", " + currentCol);
                 rect.set(left, top, right, bottom);
                 canvas.drawRect(rect, paint);
             }
@@ -341,13 +348,197 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
                 float right = left + cellWidth;
                 float bottom = top + cellWidth;
 
-                Log.d(TAG, "paint block: " + currentRow + ", " + currentCol);
+                //Log.d(TAG, "paint block: " + currentRow + ", " + currentCol);
                 rect.set(left, top, right, bottom);
                 canvas.drawRect(rect, paint);
 
             }
         }
 
+    }
+
+    public void decode(String newMapInfo){
+        // Receive Message from PC
+        Log.d(TAG, "Completed Message: " + newMapInfo);
+        try {
+
+            String[] updateInfo;
+            if (newMapInfo.contains("BOT_POS") && newMapInfo.contains("MAP")) {
+                int a = newMapInfo.indexOf("MAP");
+                int b = newMapInfo.indexOf("BOT_POS");
+                String u ;
+                String r ;
+                if (a == 0) {
+                    u = newMapInfo.substring(0, b);
+                    r = newMapInfo.substring(b);
+                } else {
+                    u = newMapInfo.substring(a);
+                    r = newMapInfo.substring(0, a);
+                }
+
+                // Robot Pos update
+
+                String robotPos = r.split(" ")[1];
+                Log.d(TAG, "Robot Pos :" + robotPos);
+
+                int column = Integer.valueOf(robotPos.split(",")[1]);
+                int row = Integer.valueOf(robotPos.split(",")[0]);
+                String headPos = robotPos.split(",")[2];
+                switch (headPos) {
+                    case "N":
+                        robot.setHeadPos(HEAD_POS_UP);
+                        break;
+                    case "S":
+                        robot.setHeadPos(HEAD_POS_DOWN);
+                        break;
+                    case "W":
+                        robot.setHeadPos(HEAD_POS_LEFT);
+                        break;
+                    case "E":
+                        robot.setHeadPos(HEAD_POS_RIGHT);
+                        break;
+                }
+                float currentX = mapStartX + SCREEN_PADDING + (column - 1) * cellWidth;
+                float currentY = mapStartY + SCREEN_PADDING + (18 - row) * cellWidth;
+                robot.setCurrentX(currentX);
+                robot.setCurrentY(currentY);
+
+                // Map Info updated
+
+                Log.d(TAG, "Map String :" + newMapInfo);
+                updateInfo = u.split(" ");
+                mdfP1 = updateInfo[1];
+                Log.d(TAG, "MDFp1 : " + mdfP1);
+                String P1 = new String();
+                mdfP2 = updateInfo[2];
+                Log.d(TAG, "MDFp2 : " + mdfP2);
+                String P2 = new String();
+                //String robotPos = updateInfo[1].replace(" ", "");
+
+
+                String mapInfo = robot.getArenaMap();
+                String[] info = mapInfo.split(" ");
+
+                for (char x : mdfP1.toCharArray()) {
+                    //P1.append(hexToBin(mdfP1.toCharArray()[i]));
+                    P1 += hexToBin(x);
+                }
+                Log.d(TAG, "P1 :" + P1.substring(2, 302));
+                // After split. A "" is put at the beginning. Array length is 301
+                String[] p1Info = P1.substring(2, 302).split("");
+
+                for (char y : mdfP2.toCharArray()) {
+                    //P2.append(hexToBin(mdfP2.toCharArray()[j]));
+                    P2 += hexToBin(y);
+                }
+                Log.d(TAG, "P2 :" + P2);
+                String[] p2Info = P2.split("");
+
+                //Log.d(TAG, TextUtils.join(" ",p1Info));
+
+                int counter1 = 1, counter2 = 1;
+                for (row = 19; row >= 0; row--) {
+                    for (int index = 0; index < 15; index++) {
+                        int indexToSet = row * 15 + index;
+                        if (p1Info[counter1].equals("0")) {
+                            info[indexToSet] = "2";
+                        } else {
+                            if (p2Info[counter2].equals("1")) {
+                                info[indexToSet] = "1";
+                            } else {
+                                info[indexToSet] = "0";
+                            }
+                            counter2++;
+                        }
+                        counter1++;
+                    }
+                }
+
+                robot.setArenaMap(TextUtils.join(" ", info));
+
+
+            } else if (newMapInfo.contains("BOT_POS")) {
+                String robotPos = newMapInfo.split(" ")[1];
+                Log.d(TAG, "Robot Pos :" + robotPos);
+
+                int column = Integer.valueOf(robotPos.split(",")[1]);
+                int row = Integer.valueOf(robotPos.split(",")[0]);
+                String headPos = robotPos.split(",")[2];
+                switch (headPos) {
+                    case "N":
+                        robot.setHeadPos(HEAD_POS_UP);
+                        break;
+                    case "S":
+                        robot.setHeadPos(HEAD_POS_DOWN);
+                        break;
+                    case "W":
+                        robot.setHeadPos(HEAD_POS_LEFT);
+                        break;
+                    case "E":
+                        robot.setHeadPos(HEAD_POS_RIGHT);
+                        break;
+                }
+                float currentX = mapStartX + SCREEN_PADDING + (column - 1) * cellWidth;
+                float currentY = mapStartY + SCREEN_PADDING + (18 - row) * cellWidth;
+                robot.setCurrentX(currentX);
+                robot.setCurrentY(currentY);
+            } else {
+                Log.d(TAG, "Map String :" + newMapInfo);
+                updateInfo = newMapInfo.split(" ");
+                mdfP1 = updateInfo[1];
+                Log.d(TAG, "MDFp1 : " + mdfP1);
+                String P1 = new String();
+                mdfP2 = updateInfo[2];
+                Log.d(TAG, "MDFp2 : " + mdfP2);
+                String P2 = new String();
+                //String robotPos = updateInfo[1].replace(" ", "");
+
+
+                String mapInfo = robot.getArenaMap();
+                String[] info = mapInfo.split(" ");
+
+                for (char x : mdfP1.toCharArray()) {
+                    //P1.append(hexToBin(mdfP1.toCharArray()[i]));
+                    P1 += hexToBin(x);
+                }
+                Log.d(TAG, "P1 :" + P1.substring(2, 302));
+                // After split. A "" is put at the beginning. Array length is 301
+                String[] p1Info = P1.substring(2, 302).split("");
+
+                for (char y : mdfP2.toCharArray()) {
+                    //P2.append(hexToBin(mdfP2.toCharArray()[j]));
+                    P2 += hexToBin(y);
+                }
+                Log.d(TAG, "P2 :" + P2);
+                String[] p2Info = P2.split("");
+
+                //Log.d(TAG, TextUtils.join(" ",p1Info));
+
+                int counter1 = 1, counter2 = 1;
+                for (row = 19; row >= 0; row--) {
+                    for (int index = 0; index < 15; index++) {
+                        int indexToSet = row * 15 + index;
+                        if (p1Info[counter1].equals("0")) {
+                            info[indexToSet] = "2";
+                        } else {
+                            if (p2Info[counter2].equals("1")) {
+                                info[indexToSet] = "1";
+                            } else {
+                                info[indexToSet] = "0";
+                            }
+                            counter2++;
+                        }
+                        counter1++;
+                    }
+                }
+
+                robot.setArenaMap(TextUtils.join(" ", info));
+            }
+            drawMap();
+        }
+        catch (Exception e){
+            Log.d(TAG, "Wrong Message Format");
+        }
     }
 
     public void decodeMessage(String newMapInfo){
@@ -393,6 +584,28 @@ public class MapSurface extends SurfaceView implements SurfaceHolder.Callback {
             return HEAD_POS_RIGHT;
         else
             return HEAD_POS_UP;
+    }
+
+    public String[] getRobotPos(){
+        String[] robotPos = new String[2];
+        robotPos[0] = Integer.toString(col);
+        robotPos[1] = Integer.toString(row);
+        return robotPos;
+    }
+
+    /**
+     * Helper method to convert a hex digit to a binary string of four digits.
+     */
+    private static String hexToBin(char hex) {
+        int dec = Integer.parseInt(hex + "", 16);
+
+        char[] buf = new char[4];
+        buf[3] = (dec & 1) == 1 ? '1' : '0';
+        buf[2] = (dec & 2) == 2 ? '1' : '0';
+        buf[1] = (dec & 4) == 4 ? '1' : '0';
+        buf[0] = (dec & 8) == 8 ? '1' : '0';
+
+        return new String(buf);
     }
 
     @Override

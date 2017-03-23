@@ -181,19 +181,19 @@
         android:id="@+id/robotStatus" />
 
     <TextView
-        android:text="0:00"
+        android:id="@+id/timer1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timer1"
-        android:textAlignment="center"
-        android:textStyle="normal|bold"
-        android:textSize="18sp"
         android:layout_alignBaseline="@+id/btnF2"
         android:layout_alignBottom="@+id/btnF2"
-        android:layout_toRightOf="@+id/btnExploreStart"
-        android:layout_toEndOf="@+id/btnExploreStart"
         android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp" />
+        android:layout_marginStart="18dp"
+        android:layout_toEndOf="@+id/btnExploreStart"
+        android:layout_toRightOf="@+id/btnExploreStart"
+        android:text="00:00:00"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="normal|bold" />
 
     <Button
         android:text="REVERSE"
@@ -217,15 +217,59 @@
         android:textAlignment="center" />
 
     <TextView
-        android:text="Explore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textSize="18sp"
-        android:layout_alignBaseline="@+id/btnExploreStart"
-        android:layout_alignBottom="@+id/btnExploreStart"
-        android:layout_toRightOf="@+id/robotStatus"
-        android:layout_marginLeft="13dp"
-        android:layout_marginStart="13dp" />
+        android:id="@+id/mdfP1"
+        android:layout_below="@+id/robotStatus"
+        android:layout_alignLeft="@+id/mdfP2"
+        android:layout_alignStart="@+id/mdfP2"
+        android:text="MDFP1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/btnUpdate" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:id="@+id/mdfP2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="MDFP2"
+        android:layout_below="@+id/mdfP1"
+        android:layout_width="350dp" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnExploreStart"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/turnLeft"
+        android:layout_alignStart="@+id/turnLeft"
+        android:layout_below="@+id/turnLeft">
+
+        <RadioButton
+            android:id="@+id/exploreMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnExploreStart"
+            android:layout_alignLeft="@+id/btnExploreStart"
+            android:layout_alignStart="@+id/btnExploreStart"
+            android:layout_weight="1"
+            android:text="Explore" />
+
+        <RadioButton
+            android:id="@+id/shortestPathMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnExploreStop"
+            android:layout_alignLeft="@+id/timer1"
+            android:layout_alignStart="@+id/timer1"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_weight="1"
+            android:text="Shortest Path" />
+
+    </RadioGroup>
 
 </RelativeLayout>

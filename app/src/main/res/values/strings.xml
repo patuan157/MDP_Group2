@@ -35,7 +35,7 @@
     <string name="turing_left">Turning Left</string>
     <string name="turing_right">Turning Right</string>
     <string name="exploring">Exploring</string>
-    <string name="default_time">0:00</string>
+    <string name="default_time">00:00:00</string>
     <string name="move_forward">Move:forward</string>
     <string name="move_reverse">Move:reverse</string>
     <string name="turn_left">Turn:left</string>

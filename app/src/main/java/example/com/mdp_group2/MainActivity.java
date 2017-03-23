@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -70,12 +71,17 @@ public class MainActivity extends AppCompatActivity{
     TextView robotStatus;           // Show Robot Status
     TextView timer1;                // Show Exploration Time
 
+    TextView mdfP1;                 // MDF String part 1
+    TextView mdfP2;                 // MDF String part 2
+
     Button btnF1;                   // F1
     Button btnF2;                   // F2
 
-    Button exploreStart;            // Exploration Start Button
-    Button exploreStop;             // Exploration Stop Button
-    Button exploreReset;            // Exploration Reset Button
+    Button btnStart;            // Start Button
+    Button btnStop;             // Stop Button
+    Button btnReset;            // Reset Button
+    RadioButton exploreMode;        // Explore Mode
+    RadioButton shortestPathMode;   // Shortest Path Mode
 
     ToggleButton toggleMode;        // Toggle the "MANUAL" or "AUTO" mode.
     Button btnUpdate;               // Update the map
@@ -92,10 +98,13 @@ public class MainActivity extends AppCompatActivity{
         public void run() {
             long millis = System.currentTimeMillis() - startTime1;
             int seconds = (int) (millis / 1000.0);
+
+            int minute = seconds / 60;
             //int minutes = seconds / 60;
             seconds = seconds % 60;
 
-            timer1.setText(String.format("%d:%d", ((int)seconds), ((long)millis%100)));
+
+            timer1.setText(String.format("%d:%d:%d", minute,seconds, (millis%100)));
 
             timerHandler1.postDelayed(this, 0);
         }
@@ -134,6 +143,7 @@ public class MainActivity extends AppCompatActivity{
         mapPanel = (LinearLayout) findViewById(R.id.mapPanel);
         mapSurface = new MapSurface(MainActivity.this);
         mapPanel.addView(mapSurface);
+
         mapPanel.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -165,7 +175,6 @@ public class MainActivity extends AppCompatActivity{
                                 mapSurface.turnRight();
                                 break;
                         }
-
                         return true;
                     default :
                         return true;
@@ -256,6 +265,8 @@ public class MainActivity extends AppCompatActivity{
         });
 
         robotStatus = (TextView) findViewById(R.id.robotStatus);
+        mdfP1 = (TextView) findViewById(R.id.mdfP1);
+        mdfP2 = (TextView) findViewById(R.id.mdfP2);
         timer1 = (TextView) findViewById(R.id.timer1);
 
         btnF1 = (Button) findViewById(R.id.btnF1);
@@ -276,46 +287,60 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        exploreStart = (Button) findViewById(R.id.btnExploreStart);
-        exploreStart.setOnClickListener(new View.OnClickListener() {
+        exploreMode = (RadioButton) findViewById(R.id.exploreMode);
+        shortestPathMode = (RadioButton) findViewById(R.id.shortestPathMode);
+
+        btnStart = (Button) findViewById(R.id.btnExploreStart);
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage("beginExplore");
-                robotStatus.setText("exploring");
+                String[] robotPos = mapSurface.getRobotPos();
+                if (exploreMode.isChecked()){
+                    sendMessage("EX_START;" +
+                            robotPos[0] + "," + robotPos[1] + "\n");
+                    robotStatus.setText("Exploring");
+                } else {
+                    sendMessage("FP_START" + "\n");
+                    robotStatus.setText("Running Shortest Path");
+                }
+
+
                 startTime1 = System.currentTimeMillis();
                 timerHandler1.postDelayed(timerRunnable1, 0);
-                exploreStart.setEnabled(false);
-                exploreStop.setEnabled(true);
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
             }
         });
 
-        exploreStop = (Button) findViewById(R.id.btnExploreStop);
-        exploreStop.setOnClickListener(new View.OnClickListener() {
+        btnStop = (Button) findViewById(R.id.btnExploreStop);
+        btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage("STOP");
                 timerHandler1.removeCallbacks(timerRunnable1);
-                exploreStart.setEnabled(true);
-                exploreStop.setEnabled(false);
+                btnStart.setEnabled(true);
+                btnStop.setEnabled(false);
             }
         });
 
-        exploreReset = (Button) findViewById(R.id.btnExploreReset);
-        exploreReset.setOnClickListener(new View.OnClickListener() {
+        btnReset = (Button) findViewById(R.id.btnExploreReset);
+        btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage("RESET");
-                robotStatus.setText("reset");
+                robotStatus.setText("Reset Counter");
                 timer1.setText(R.string.default_time);
             }
         });
+
+
         toggleMode = (ToggleButton) findViewById(R.id.toggleMode);
 
 
         btnUpdate = (Button) findViewById(R.id.btnUpdate);
 
         functionPref = new FunctionPreference(getApplicationContext());
-        exploreStop.setEnabled(false);
+        btnStop.setEnabled(false);
 
     }
 
@@ -472,8 +497,13 @@ public class MainActivity extends AppCompatActivity{
                     } else {
                         // Decode action from robot to send back to the Android Tablet
                         // Message contain GRID mean arenaInfo
-                        if (readMessage.contains("GRID"))
-                            mapSurface.decodeMessage(readMessage);
+                        if (readMessage.contains("MAP") || readMessage.contains("BOT_POS")) {
+                            mapSurface.decode(readMessage);
+                            //robotStatus.setText(mapSurface.robot.getArenaMap());
+
+                            mdfP1.setText(mapSurface.mdfP1);
+                            mdfP2.setText(mapSurface.mdfP2);
+                        }
                     }
 
 
@@ -588,7 +618,7 @@ public class MainActivity extends AppCompatActivity{
         sendMessage("sendArena");
     }
 
-    // Sensor part
+    // Motion Event part
 
     /**
      * Given two points in the plane p1=(x1, x2) and p2=(y1, y1), this method
